@@ -1,0 +1,4 @@
+name: xmpp
+description: xmpp client for dart
+#dependencies:
+#  unittest: any
