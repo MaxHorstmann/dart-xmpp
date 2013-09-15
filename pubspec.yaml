@@ -1,4 +1,8 @@
 name: xmpp
-description: xmpp client for dart
+version: 0.0.1
+author: Max Horstmann <max.horstmann@gmail.com>
+description: '** work in progress, not ready for production use yet *  Lightweight
+  XMPP client for Dart. With support for Facebook chat server.'
+homepage: https://github.com/MaxHorstmann/dart-xmpp
 dependencies:
   crypto: 0.6.13
