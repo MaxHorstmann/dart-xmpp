@@ -1,6 +1,4 @@
-import "dart:io";
-import "dart:async";
-import 'package:crypto/crypto.dart';
+part of xmpp;
 
 class StateResponse
 {
@@ -9,24 +7,18 @@ class StateResponse
   StateResponse(this.CheckResponse,this.SendRequest);
 }
 
-
-class FacebookXmppConnection
+class XmppConnection
 {
   String _host;
   int _port;
   int _state = 0; // TODO make enum
   Socket _socket = null;
-  
-  String _app_id;
-  String _access_token;
-  
-  Completer _completer;
 
-  
+  Completer _completer;
   var _stateResponses;  
-  
-  FacebookXmppConnection(this._host, this._port, this._app_id, this._access_token);
-  
+
+  XmppConnection(this._host, this._port);
+
   void ProcessResponse(String response)
   {
     if (_state == -1) {
@@ -67,13 +59,12 @@ class FacebookXmppConnection
         var uri = Uri.decodeFull(str);
         var method = uri.split('&')[1].substring(7);
         var nonce = uri.split('&')[2].substring(6);
-        var inner = 'method=$method&nonce=$nonce&access_token=$_access_token&api_key=$_app_id&call_id=0&v=1.0';
+        var inner = _getInnerChallengeResponse(method, nonce);
         var innerEncoded = CryptoUtils.bytesToBase64(inner.runes.toList());
         
         var challengeResponse = '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">$innerEncoded</response>';
         _state++;
         _socket.write(challengeResponse);       
-        
         
       }
       else
@@ -88,11 +79,15 @@ class FacebookXmppConnection
       _state = -1;
       _completer.completeError("error");
           
-    }
-        
+    }        
+  }
+  
+  String _getInnerChallengeResponse(String method, String nonce)
+  {
+    // TODO this is untested
+    return 'method=$method&nonce=$nonce&call_id=0&v=1.0';
   }
     
-  
   
   Future Open()
   {  
@@ -141,8 +136,9 @@ class FacebookXmppConnection
     _socket.write('</stream:stream>');
     _state = 0;
   }
+
+  
+  
 }
   
-
-
 

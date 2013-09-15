@@ -1,6 +1,9 @@
 dart-xmpp
 =========
 
-XMPP client for Dart
+Lightweight XMPP client for Dart. Contains additional support for the Facebook chat server
+(chat.facebook.com) which speaks a modified subset of the XMPP protocol.
 
-Working on a V0.1. See https://gist.github.com/MaxHorstmann/5996495 for some sample code until then.
+This is work in progress. 
+
+
