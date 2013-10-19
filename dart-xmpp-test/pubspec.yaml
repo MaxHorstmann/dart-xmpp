@@ -1,0 +1,8 @@
+name: xmpptest
+version: 0.0.1
+author: Max Horstmann
+description: Test application for dart-xmpp
+homepage: https://github.com/MaxHorstmann/dart-xmpp
+dependencies:
+  xmpp:
+    path: ..\dart-xmpp
