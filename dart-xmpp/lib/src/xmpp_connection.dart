@@ -15,12 +15,41 @@ class XmppConnection
   Socket _socket = null;
 
   Completer _completer;
-  var _stateResponses;  
-
-  XmppConnection(this._host, this._port);
-
+  XmppConnection(String host, int port)
+  {
+    _host = host;
+    _port = port;
+    _stateResponses =  
+        [ new StateResponse('','<stream:stream xmlns:stream="http://etherx.jabber.org/streams" version="1.0" xmlns="jabber:client" to="$_host" xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">'),        
+          new StateResponse('stream:stream',''),
+          new StateResponse('X-FACEBOOK-PLATFORM','<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>'),
+          new StateResponse('proceed','<stream:stream xmlns:stream="http://etherx.jabber.org/streams" version="1.0" xmlns="jabber:client" to="chat.facebook.com" xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">'),
+          new StateResponse('stream:stream',''),
+          new StateResponse('X-FACEBOOK-PLATFORM','<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="X-FACEBOOK-PLATFORM"></auth>'),
+          new StateResponse('challenge',''),
+          new StateResponse('success','<stream:stream xmlns:stream="http://etherx.jabber.org/streams" version="1.0" xmlns="jabber:client" to="$_host" xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">'),
+          new StateResponse('stream:stream',''),
+          new StateResponse('stream:features','<iq type="set" id="3"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"><resource>fb_xmpp_script</resource></bind></iq>'),          
+          new StateResponse('jid','<iq type="set" id="4" to="chat.facebook.com"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>'),          
+          new StateResponse('session','<presence />')   
+        ]; 
+  }
+  
+  var _stateResponses;
+  
   void ProcessResponse(String response)
   {
+    print('ProcessResponse');
+    print (response);
+    
+//    // TODO
+//    if (response.length > 0) {
+//      print('xml parse...');
+//      XmlElement myXmlTree = XML.parse(response);
+//      print (myXmlTree.hasChildren);
+//    }
+    
+
     if (_state == -1) {
       return; // error
     }
@@ -44,7 +73,7 @@ class XmppConnection
         SecureSocket.secure(_socket).then(
             (secureSocket) {
               _socket = secureSocket;
-              _socket.transform(new StringDecoder()).listen(ProcessResponse);
+              _socket.transform(UTF8.decoder).listen(ProcessResponse);
               _state++;
               _socket.write(stateResponse.SendRequest);
             });
@@ -90,24 +119,8 @@ class XmppConnection
     
   
   Future Open()
-  {  
-    
-    _stateResponses =  
-        [ new StateResponse('','<stream:stream xmlns:stream="http://etherx.jabber.org/streams" version="1.0" xmlns="jabber:client" to="$_host" xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">'),        
-          new StateResponse('stream:stream',''),
-          new StateResponse('X-FACEBOOK-PLATFORM','<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>'),
-          new StateResponse('proceed','<stream:stream xmlns:stream="http://etherx.jabber.org/streams" version="1.0" xmlns="jabber:client" to="chat.facebook.com" xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">'),
-          new StateResponse('stream:stream',''),
-          new StateResponse('X-FACEBOOK-PLATFORM','<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="X-FACEBOOK-PLATFORM"></auth>'),
-          new StateResponse('challenge',''),
-          new StateResponse('success','<stream:stream xmlns:stream="http://etherx.jabber.org/streams" version="1.0" xmlns="jabber:client" to="$_host" xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">'),
-          new StateResponse('stream:stream',''),
-          new StateResponse('stream:features','<iq type="set" id="3"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"><resource>fb_xmpp_script</resource></bind></iq>'),          
-          new StateResponse('jid','<iq type="set" id="4" to="chat.facebook.com"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>'),          
-          new StateResponse('session','<presence />')   
-          ]; 
-    
-    
+  {        
+
     _completer = new Completer();
     
     Socket.connect(_host, _port).then(
@@ -115,7 +128,7 @@ class XmppConnection
           _state=0;
           _socket = socket;
           
-          socket.transform(new StringDecoder()).listen(ProcessResponse);
+          socket.transform(UTF8.decoder).listen(ProcessResponse);
           
           ProcessResponse('');         
 

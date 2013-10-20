@@ -6,3 +6,4 @@ description: '** work in progress, not ready for production use yet *  Lightweig
 homepage: https://github.com/MaxHorstmann/dart-xmpp
 dependencies:
   crypto: 0.6.13
+  xml: any

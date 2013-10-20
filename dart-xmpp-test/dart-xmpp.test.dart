@@ -20,13 +20,12 @@ void testFacebookXmpp() {
     .then(
       (foo) {
         print("connection open...");
-        conn.SendPresence();
+        //conn.SendPresence();
         print("success!");
       })
   .catchError(
       (e) {
-        print("Error!");
-        print(e);
+        print("Error: $e");
       });
     
   

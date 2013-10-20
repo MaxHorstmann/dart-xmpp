@@ -4,10 +4,11 @@
 
 library xmpp;
 
-import 'dart:collection';
 import "dart:io";
 import "dart:async";
+import "dart:convert";
 import 'package:crypto/crypto.dart';
+import "package:xml/xml.dart";
 
 part 'src/xmpp_connection.dart';
 part 'src/xmpp_facebookConnection.dart';
